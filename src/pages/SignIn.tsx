@@ -4,12 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, Building, Shield } from "lucide-react";
+import { CreditCard, User, Shield } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const [userType, setUserType] = useState<'business' | 'superadmin'>('business');
+  const [userType, setUserType] = useState<'individual' | 'superadmin'>('individual');
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -59,12 +59,12 @@ const SignIn = () => {
           <div className="grid grid-cols-2 gap-3">
             <Button
               type="button"
-              variant={userType === 'business' ? 'default' : 'outline'}
-              onClick={() => setUserType('business')}
+              variant={userType === 'individual' ? 'default' : 'outline'}
+              onClick={() => setUserType('individual')}
               className="flex items-center space-x-2 p-3"
             >
-              <Building className="w-4 h-4" />
-              <span>Business</span>
+              <User className="w-4 h-4" />
+              <span>Individual</span>
             </Button>
             <Button
               type="button"

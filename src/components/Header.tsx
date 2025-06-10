@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { CreditCard, Menu, X } from "lucide-react";
+import { CreditCard, Menu, X, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -38,6 +38,10 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => navigate("/profile")}>
+              <User className="w-4 h-4 mr-2" />
+              Profile
+            </Button>
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => navigate("/signin")}>
               Sign In
             </Button>
@@ -79,6 +83,10 @@ const Header = () => {
                 About
               </Link>
               <div className="flex flex-col space-y-2 pt-4">
+                <Button variant="ghost" className="justify-start" onClick={() => navigate("/profile")}>
+                  <User className="w-4 h-4 mr-2" />
+                  Profile
+                </Button>
                 <Button variant="ghost" className="justify-start" onClick={() => navigate("/signin")}>
                   Sign In
                 </Button>

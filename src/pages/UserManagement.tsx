@@ -5,26 +5,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CreditCard, ArrowLeft, Plus, Trash2, Edit } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { CreditCard, Users, Trash2, Plus, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUsers, User } from "@/contexts/UserContext";
 
 const UserManagement = () => {
   const navigate = useNavigate();
   const { users, addUser, deleteUser } = useUsers();
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
-    plan: "Free" as const,
-    status: "Active" as const
+    plan: "Free" as User['plan'],
+    status: "Active" as User['status']
   });
 
   const handleAddUser = (e: React.FormEvent) => {
     e.preventDefault();
     addUser(newUser);
     setNewUser({ name: "", email: "", plan: "Free", status: "Active" });
-    setShowAddForm(false);
+    setIsAddUserOpen(false);
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -35,14 +36,13 @@ const UserManagement = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
+              <Button variant="ghost" onClick={() => navigate("/admin")}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Admin
+                Back to Dashboard
               </Button>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg flex items-center justify-center">
@@ -51,104 +51,134 @@ const UserManagement = () => {
                 <span className="text-xl font-bold text-gradient">User Management</span>
               </div>
             </div>
-            <Button onClick={() => setShowAddForm(true)} className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Add User
-            </Button>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">User Management</h1>
-          <p className="text-muted-foreground">Manage all users and their accounts</p>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">User Management</h1>
+            <p className="text-muted-foreground">Manage all users in your system</p>
+          </div>
+          <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add User
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New User</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleAddUser} className="space-y-4">
+                <div>
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    value={newUser.name}
+                    onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={newUser.email}
+                    onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Plan</Label>
+                  <Select value={newUser.plan} onValueChange={(value: User['plan']) => setNewUser({...newUser, plan: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Free">Free</SelectItem>
+                      <SelectItem value="Pro">Pro</SelectItem>
+                      <SelectItem value="Business">Business</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Status</Label>
+                  <Select value={newUser.status} onValueChange={(value: User['status']) => setNewUser({...newUser, status: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Active">Active</SelectItem>
+                      <SelectItem value="Inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button type="submit" className="w-full">Add User</Button>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
 
-        {/* Add User Form */}
-        {showAddForm && (
-          <Card className="p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Add New User</h2>
-            <form onSubmit={handleAddUser} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  value={newUser.name}
-                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                  placeholder="John Doe"
-                  required
-                />
+                <p className="text-sm text-muted-foreground">Total Users</p>
+                <p className="text-2xl font-bold">{users.length}</p>
               </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={newUser.email}
-                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  placeholder="john@example.com"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="plan">Plan</Label>
-                <Select value={newUser.plan} onValueChange={(value: "Free" | "Pro" | "Business") => setNewUser({ ...newUser, plan: value })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Free">Free</SelectItem>
-                    <SelectItem value="Pro">Pro</SelectItem>
-                    <SelectItem value="Business">Business</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="status">Status</Label>
-                <Select value={newUser.status} onValueChange={(value: "Active" | "Inactive") => setNewUser({ ...newUser, status: value })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex space-x-2 md:col-span-2">
-                <Button type="submit">Add User</Button>
-                <Button type="button" variant="outline" onClick={() => setShowAddForm(false)}>Cancel</Button>
-              </div>
-            </form>
+              <Users className="w-8 h-8 text-brand-500" />
+            </div>
           </Card>
-        )}
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Active Users</p>
+                <p className="text-2xl font-bold">{users.filter(u => u.status === 'Active').length}</p>
+              </div>
+              <Users className="w-8 h-8 text-green-500" />
+            </div>
+          </Card>
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Premium Users</p>
+                <p className="text-2xl font-bold">{users.filter(u => u.plan !== 'Free').length}</p>
+              </div>
+              <Users className="w-8 h-8 text-purple-500" />
+            </div>
+          </Card>
+        </div>
 
-        {/* Users List */}
+        {/* Users Table */}
         <Card>
           <div className="p-6 border-b border-border">
-            <h2 className="text-xl font-semibold">All Users ({users.length})</h2>
+            <h2 className="text-xl font-semibold">All Users</h2>
           </div>
           <div className="p-6">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left py-3">Name</th>
-                    <th className="text-left py-3">Email</th>
-                    <th className="text-left py-3">Plan</th>
-                    <th className="text-left py-3">Status</th>
-                    <th className="text-left py-3">Created</th>
-                    <th className="text-left py-3">Actions</th>
+                    <th className="text-left py-2">Name</th>
+                    <th className="text-left py-2">Email</th>
+                    <th className="text-left py-2">Plan</th>
+                    <th className="text-left py-2">Status</th>
+                    <th className="text-left py-2">Created</th>
+                    <th className="text-left py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((user) => (
                     <tr key={user.id} className="border-b border-border/50">
-                      <td className="py-4 font-medium">{user.name}</td>
-                      <td className="py-4 text-muted-foreground">{user.email}</td>
-                      <td className="py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      <td className="py-3">{user.name}</td>
+                      <td className="py-3 text-muted-foreground">{user.email}</td>
+                      <td className="py-3">
+                        <span className={`px-2 py-1 rounded-full text-xs ${
                           user.plan === 'Pro' ? 'bg-blue-100 text-blue-800' :
                           user.plan === 'Business' ? 'bg-purple-100 text-purple-800' :
                           'bg-gray-100 text-gray-800'
@@ -156,20 +186,20 @@ const UserManagement = () => {
                           {user.plan}
                         </span>
                       </td>
-                      <td className="py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      <td className="py-3">
+                        <span className={`px-2 py-1 rounded-full text-xs ${
                           user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                         }`}>
                           {user.status}
                         </span>
                       </td>
-                      <td className="py-4 text-muted-foreground">
+                      <td className="py-3 text-muted-foreground">
                         {user.createdAt.toLocaleDateString()}
                       </td>
-                      <td className="py-4">
+                      <td className="py-3">
                         <div className="flex space-x-2">
                           <Button variant="outline" size="sm">
-                            <Edit className="w-4 h-4" />
+                            Edit
                           </Button>
                           <Button 
                             variant="outline" 
