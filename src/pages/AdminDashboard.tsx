@@ -1,21 +1,36 @@
 
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Users, BarChart3, DollarSign, LogOut, Settings } from "lucide-react";
+import { CreditCard, Users, BarChart3, DollarSign, LogOut, Settings, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useUsers } from "@/contexts/UserContext";
+import { useCards } from "@/contexts/CardContext";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [users] = useState([
-    { id: 1, name: "John Smith", email: "john@example.com", plan: "Pro", status: "Active" },
-    { id: 2, name: "Sarah Johnson", email: "sarah@example.com", plan: "Free", status: "Active" },
-    { id: 3, name: "Mike Wilson", email: "mike@example.com", plan: "Business", status: "Active" }
-  ]);
+  const { users, deleteUser } = useUsers();
+  const { cards } = useCards();
 
   const handleLogout = () => {
     navigate("/");
   };
+
+  const handleManageUsers = () => {
+    navigate("/admin/users");
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      deleteUser(userId);
+    }
+  };
+
+  const totalRevenue = users.reduce((sum, user) => {
+    const revenue = user.plan === 'Pro' ? 29 : user.plan === 'Business' ? 99 : 0;
+    return sum + revenue;
+  }, 0);
+
+  const growthRate = 15; // Mock growth rate
 
   return (
     <div className="min-h-screen bg-background">
@@ -30,9 +45,9 @@ const AdminDashboard = () => {
               <span className="text-xl font-bold text-gradient">CardCraft Admin</span>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={handleManageUsers}>
                 <Settings className="w-4 h-4 mr-2" />
-                Settings
+                Manage Users
               </Button>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
@@ -55,7 +70,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Users</p>
-                <p className="text-2xl font-bold">1,234</p>
+                <p className="text-2xl font-bold">{users.length}</p>
               </div>
               <Users className="w-8 h-8 text-brand-500" />
             </div>
@@ -64,7 +79,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Cards</p>
-                <p className="text-2xl font-bold">5,678</p>
+                <p className="text-2xl font-bold">{cards.length}</p>
               </div>
               <CreditCard className="w-8 h-8 text-blue-500" />
             </div>
@@ -73,7 +88,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Monthly Revenue</p>
-                <p className="text-2xl font-bold">$12,345</p>
+                <p className="text-2xl font-bold">${totalRevenue}</p>
               </div>
               <DollarSign className="w-8 h-8 text-green-500" />
             </div>
@@ -82,7 +97,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Growth Rate</p>
-                <p className="text-2xl font-bold">+15%</p>
+                <p className="text-2xl font-bold">+{growthRate}%</p>
               </div>
               <BarChart3 className="w-8 h-8 text-purple-500" />
             </div>
@@ -92,7 +107,13 @@ const AdminDashboard = () => {
         {/* Recent Users */}
         <Card className="mb-8">
           <div className="p-6 border-b border-border">
-            <h2 className="text-xl font-semibold">Recent Users</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Recent Users</h2>
+              <Button onClick={handleManageUsers}>
+                <Plus className="w-4 h-4 mr-2" />
+                Manage All Users
+              </Button>
+            </div>
           </div>
           <div className="p-6">
             <div className="overflow-x-auto">
@@ -107,7 +128,7 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => (
+                  {users.slice(0, 5).map((user) => (
                     <tr key={user.id} className="border-b border-border/50">
                       <td className="py-3">{user.name}</td>
                       <td className="py-3 text-muted-foreground">{user.email}</td>
@@ -126,9 +147,19 @@ const AdminDashboard = () => {
                         </span>
                       </td>
                       <td className="py-3">
-                        <Button variant="outline" size="sm">
-                          Manage
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            Edit
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleDeleteUser(user.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}

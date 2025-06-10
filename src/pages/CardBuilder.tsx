@@ -5,20 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CreditCard, ArrowLeft, Save, CreditCard as CardIcon, Mail, Phone, MapPin, Globe } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { CreditCard, ArrowLeft, Save, Mail, Phone, MapPin, Globe } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useCards } from "@/contexts/CardContext";
+import { useToast } from "@/components/ui/use-toast";
 
 const CardBuilder = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { cards, addCard, updateCard, getCard } = useCards();
+  const { toast } = useToast();
+  
+  const existingCard = id ? getCard(id) : null;
+  
   const [cardData, setCardData] = useState({
-    name: "",
-    title: "",
-    company: "",
-    email: "",
-    phone: "",
-    location: "",
-    website: "",
-    bio: ""
+    name: existingCard?.name || "",
+    title: existingCard?.title || "",
+    company: existingCard?.company || "",
+    email: existingCard?.email || "",
+    phone: existingCard?.phone || "",
+    location: existingCard?.location || "",
+    website: existingCard?.website || "",
+    bio: existingCard?.bio || ""
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -29,7 +37,29 @@ const CardBuilder = () => {
   };
 
   const handleSave = () => {
-    console.log("Saving card:", cardData);
+    if (!cardData.name || !cardData.email) {
+      toast({
+        title: "Error",
+        description: "Name and email are required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (id && existingCard) {
+      updateCard(id, cardData);
+      toast({
+        title: "Success",
+        description: "Card updated successfully!",
+      });
+    } else {
+      addCard(cardData);
+      toast({
+        title: "Success",
+        description: "Card created successfully!",
+      });
+    }
+    
     navigate("/dashboard");
   };
 
@@ -53,7 +83,7 @@ const CardBuilder = () => {
             </div>
             <Button onClick={handleSave} className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white">
               <Save className="w-4 h-4 mr-2" />
-              Save Card
+              {id ? 'Update Card' : 'Save Card'}
             </Button>
           </div>
         </div>
@@ -63,19 +93,22 @@ const CardBuilder = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Form */}
           <div>
-            <h1 className="text-2xl font-bold mb-6">Create Your Digital Business Card</h1>
+            <h1 className="text-2xl font-bold mb-6">
+              {id ? 'Edit Your Digital Business Card' : 'Create Your Digital Business Card'}
+            </h1>
             <div className="space-y-6">
               <Card className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name">Full Name *</Label>
                     <Input
                       id="name"
                       name="name"
                       value={cardData.name}
                       onChange={handleInputChange}
                       placeholder="John Smith"
+                      required
                     />
                   </div>
                   <div>
@@ -116,7 +149,7 @@ const CardBuilder = () => {
                 <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">Email *</Label>
                     <Input
                       id="email"
                       name="email"
@@ -124,6 +157,7 @@ const CardBuilder = () => {
                       value={cardData.email}
                       onChange={handleInputChange}
                       placeholder="john@example.com"
+                      required
                     />
                   </div>
                   <div>

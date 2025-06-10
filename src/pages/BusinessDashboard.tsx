@@ -1,11 +1,11 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Plus, Eye, Edit, Share, BarChart3, User, LogOut } from "lucide-react";
+import { CreditCard, Users, BarChart3, Building, LogOut, Settings, Plus, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCards } from "@/contexts/CardContext";
 
-const Dashboard = () => {
+const BusinessDashboard = () => {
   const navigate = useNavigate();
   const { cards } = useCards();
 
@@ -17,24 +17,9 @@ const Dashboard = () => {
     navigate("/card-builder");
   };
 
-  const handleViewCard = (id: string) => {
-    navigate(`/card/${id}/view`);
-  };
-
-  const handleEditCard = (id: string) => {
-    navigate(`/card/${id}/edit`);
-  };
-
-  const handleShareCard = (id: string) => {
-    // Copy shareable link to clipboard
-    const shareUrl = `${window.location.origin}/card/${id}/view`;
-    navigator.clipboard.writeText(shareUrl);
-    alert('Share link copied to clipboard!');
-  };
-
   const totalViews = cards.reduce((sum, card) => sum + card.views, 0);
   const totalShares = cards.reduce((sum, card) => sum + card.shares, 0);
-  const engagementRate = cards.length > 0 ? Math.round((totalShares / Math.max(totalViews, 1)) * 100) : 0;
+  const teamMembers = 5; // Mock team size
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,14 +29,14 @@ const Dashboard = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-white" />
+                <Building className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gradient">CardCraft</span>
+              <span className="text-xl font-bold text-gradient">CardCraft Business</span>
             </div>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm">
-                <User className="w-4 h-4 mr-2" />
-                Profile
+                <Settings className="w-4 h-4 mr-2" />
+                Team Settings
               </Button>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
@@ -64,8 +49,8 @@ const Dashboard = () => {
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">Manage your digital business cards</p>
+          <h1 className="text-3xl font-bold mb-2">Business Dashboard</h1>
+          <p className="text-muted-foreground">Manage your team's digital business cards</p>
         </div>
 
         {/* Stats */}
@@ -73,7 +58,7 @@ const Dashboard = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Cards</p>
+                <p className="text-sm text-muted-foreground">Team Cards</p>
                 <p className="text-2xl font-bold">{cards.length}</p>
               </div>
               <CreditCard className="w-8 h-8 text-brand-500" />
@@ -91,40 +76,61 @@ const Dashboard = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Shares</p>
-                <p className="text-2xl font-bold">{totalShares}</p>
+                <p className="text-sm text-muted-foreground">Team Members</p>
+                <p className="text-2xl font-bold">{teamMembers}</p>
               </div>
-              <Share className="w-8 h-8 text-green-500" />
+              <Users className="w-8 h-8 text-green-500" />
             </div>
           </Card>
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Engagement</p>
-                <p className="text-2xl font-bold">{engagementRate}%</p>
+                <p className="text-2xl font-bold">+25%</p>
               </div>
               <BarChart3 className="w-8 h-8 text-purple-500" />
             </div>
           </Card>
         </div>
 
-        {/* Cards Section */}
+        {/* Business Features */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Team Management</h3>
+            <p className="text-muted-foreground mb-4">Manage your team members and their digital business cards.</p>
+            <Button className="w-full">
+              <Users className="w-4 h-4 mr-2" />
+              Manage Team
+            </Button>
+          </Card>
+
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Brand Templates</h3>
+            <p className="text-muted-foreground mb-4">Create branded templates for consistent company identity.</p>
+            <Button className="w-full" onClick={() => navigate("/templates")}>
+              <Building className="w-4 h-4 mr-2" />
+              Manage Templates
+            </Button>
+          </Card>
+        </div>
+
+        {/* Team Cards */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Your Cards</h2>
+          <h2 className="text-2xl font-bold">Team Cards</h2>
           <Button onClick={handleCreateCard} className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white">
             <Plus className="w-4 h-4 mr-2" />
-            Create New Card
+            Create Team Card
           </Button>
         </div>
 
         {cards.length === 0 ? (
           <Card className="p-12 text-center">
-            <CreditCard className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">No cards yet</h3>
-            <p className="text-muted-foreground mb-6">Create your first digital business card to get started.</p>
+            <Building className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">No team cards yet</h3>
+            <p className="text-muted-foreground mb-6">Create your first team member's digital business card.</p>
             <Button onClick={handleCreateCard} className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white">
               <Plus className="w-4 h-4 mr-2" />
-              Create Your First Card
+              Create First Team Card
             </Button>
           </Card>
         ) : (
@@ -145,17 +151,12 @@ const Dashboard = () => {
                     <span>{card.shares} shares</span>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => handleViewCard(card.id)}>
+                    <Button variant="outline" size="sm" className="flex-1">
                       <Eye className="w-4 h-4 mr-2" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEditCard(card.id)}>
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => handleShareCard(card.id)}>
-                      <Share className="w-4 h-4 mr-2" />
-                      Share
+                    <Button variant="outline" size="sm" className="flex-1">
+                      Manage
                     </Button>
                   </div>
                 </div>
@@ -168,4 +169,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default BusinessDashboard;

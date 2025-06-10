@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import { ArrowRight, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const templates = [
   {
@@ -50,6 +51,13 @@ const templates = [
 ];
 
 const Templates = () => {
+  const navigate = useNavigate();
+
+  const handleUseTemplate = (templateId: number) => {
+    // Navigate to card builder with template pre-selected
+    navigate(`/card-builder?template=${templateId}`);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -88,7 +96,10 @@ const Templates = () => {
                     <h3 className="text-lg font-semibold">{template.name}</h3>
                     <span className="text-xs bg-muted px-2 py-1 rounded">{template.category}</span>
                   </div>
-                  <Button className="w-full">
+                  <Button 
+                    className="w-full"
+                    onClick={() => handleUseTemplate(template.id)}
+                  >
                     Use Template
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>

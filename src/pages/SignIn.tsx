@@ -4,11 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Building, Shield } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const [userType, setUserType] = useState<'business' | 'superadmin'>('business');
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -16,9 +17,15 @@ const SignIn = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual authentication
-    // Check if admin credentials
-    if (formData.email === "admin@cardcraft.com" && formData.password === "admin123") {
+    
+    // Check for admin credentials
+    if (formData.email === "admin@gmail.com" && formData.password === "PASSWORD") {
+      navigate("/admin");
+      return;
+    }
+    
+    // Route based on user type
+    if (userType === 'superadmin') {
       navigate("/admin");
     } else {
       navigate("/dashboard");
@@ -44,6 +51,31 @@ const SignIn = () => {
           </div>
           <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
           <p className="text-muted-foreground">Sign in to your CardCraft account</p>
+        </div>
+
+        {/* User Type Selection */}
+        <div className="mb-6">
+          <Label className="text-sm font-medium mb-3 block">Sign in as:</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              type="button"
+              variant={userType === 'business' ? 'default' : 'outline'}
+              onClick={() => setUserType('business')}
+              className="flex items-center space-x-2 p-3"
+            >
+              <Building className="w-4 h-4" />
+              <span>Business</span>
+            </Button>
+            <Button
+              type="button"
+              variant={userType === 'superadmin' ? 'default' : 'outline'}
+              onClick={() => setUserType('superadmin')}
+              className="flex items-center space-x-2 p-3"
+            >
+              <Shield className="w-4 h-4" />
+              <span>Super Admin</span>
+            </Button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -90,7 +122,7 @@ const SignIn = () => {
         <div className="mt-4 p-4 bg-muted/50 rounded-lg">
           <p className="text-xs text-muted-foreground text-center">
             Demo credentials:<br />
-            Admin: admin@cardcraft.com / admin123<br />
+            Admin: admin@gmail.com / PASSWORD<br />
             User: user@example.com / password
           </p>
         </div>
