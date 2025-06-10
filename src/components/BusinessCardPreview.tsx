@@ -7,7 +7,8 @@ import {
   Globe, 
   Linkedin, 
   Twitter,
-  ExternalLink 
+  ExternalLink,
+  BarChart3
 } from "lucide-react";
 
 const BusinessCardPreview = () => {
