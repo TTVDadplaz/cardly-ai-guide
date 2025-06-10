@@ -1,0 +1,145 @@
+
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CreditCard, Users, BarChart3, DollarSign, LogOut, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const [users] = useState([
+    { id: 1, name: "John Smith", email: "john@example.com", plan: "Pro", status: "Active" },
+    { id: 2, name: "Sarah Johnson", email: "sarah@example.com", plan: "Free", status: "Active" },
+    { id: 3, name: "Mike Wilson", email: "mike@example.com", plan: "Business", status: "Active" }
+  ]);
+
+  const handleLogout = () => {
+    navigate("/");
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-background/80 backdrop-blur-lg">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gradient">CardCraft Admin</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm">
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Button>
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+          <p className="text-muted-foreground">Manage users, analytics, and system settings</p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total Users</p>
+                <p className="text-2xl font-bold">1,234</p>
+              </div>
+              <Users className="w-8 h-8 text-brand-500" />
+            </div>
+          </Card>
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total Cards</p>
+                <p className="text-2xl font-bold">5,678</p>
+              </div>
+              <CreditCard className="w-8 h-8 text-blue-500" />
+            </div>
+          </Card>
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Monthly Revenue</p>
+                <p className="text-2xl font-bold">$12,345</p>
+              </div>
+              <DollarSign className="w-8 h-8 text-green-500" />
+            </div>
+          </Card>
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Growth Rate</p>
+                <p className="text-2xl font-bold">+15%</p>
+              </div>
+              <BarChart3 className="w-8 h-8 text-purple-500" />
+            </div>
+          </Card>
+        </div>
+
+        {/* Recent Users */}
+        <Card className="mb-8">
+          <div className="p-6 border-b border-border">
+            <h2 className="text-xl font-semibold">Recent Users</h2>
+          </div>
+          <div className="p-6">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2">Name</th>
+                    <th className="text-left py-2">Email</th>
+                    <th className="text-left py-2">Plan</th>
+                    <th className="text-left py-2">Status</th>
+                    <th className="text-left py-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id} className="border-b border-border/50">
+                      <td className="py-3">{user.name}</td>
+                      <td className="py-3 text-muted-foreground">{user.email}</td>
+                      <td className="py-3">
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          user.plan === 'Pro' ? 'bg-blue-100 text-blue-800' :
+                          user.plan === 'Business' ? 'bg-purple-100 text-purple-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {user.plan}
+                        </span>
+                      </td>
+                      <td className="py-3">
+                        <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                          {user.status}
+                        </span>
+                      </td>
+                      <td className="py-3">
+                        <Button variant="outline" size="sm">
+                          Manage
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Card>
+      </main>
+    </div>
+  );
+};
+
+export default AdminDashboard;

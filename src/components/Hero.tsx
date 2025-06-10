@@ -1,8 +1,11 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Users, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative pt-24 pb-16 overflow-hidden">
       {/* Background Gradient */}
@@ -37,6 +40,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              onClick={() => navigate("/signup")}
             >
               Start Creating Now
               <ArrowRight className="ml-2 w-5 h-5" />
@@ -45,6 +49,7 @@ const Hero = () => {
               variant="outline" 
               size="lg"
               className="px-8 py-6 text-lg rounded-xl border-2 hover:bg-muted/50 transition-all duration-300"
+              onClick={() => navigate("/templates")}
             >
               Watch Demo
             </Button>

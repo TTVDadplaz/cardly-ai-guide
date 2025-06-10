@@ -2,44 +2,49 @@
 import { Button } from "@/components/ui/button";
 import { CreditCard, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg flex items-center justify-center">
               <CreditCard className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-gradient">CardCraft</span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/#features" className="text-muted-foreground hover:text-foreground transition-colors">
               Features
-            </a>
-            <a href="#templates" className="text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link to="/templates" className="text-muted-foreground hover:text-foreground transition-colors">
               Templates
-            </a>
-            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">
               Pricing
-            </a>
-            <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">
               About
-            </a>
+            </Link>
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => navigate("/signin")}>
               Sign In
             </Button>
-            <Button className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white">
+            <Button 
+              className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white"
+              onClick={() => navigate("/signup")}
+            >
               Start Free Trial
             </Button>
           </div>
@@ -61,23 +66,26 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border animate-slide-up">
             <nav className="flex flex-col space-y-4">
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/#features" className="text-muted-foreground hover:text-foreground transition-colors">
                 Features
-              </a>
-              <a href="#templates" className="text-muted-foreground hover:text-foreground transition-colors">
+              </Link>
+              <Link to="/templates" className="text-muted-foreground hover:text-foreground transition-colors">
                 Templates
-              </a>
-              <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+              </Link>
+              <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">
                 Pricing
-              </a>
-              <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
+              </Link>
+              <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">
                 About
-              </a>
+              </Link>
               <div className="flex flex-col space-y-2 pt-4">
-                <Button variant="ghost" className="justify-start">
+                <Button variant="ghost" className="justify-start" onClick={() => navigate("/signin")}>
                   Sign In
                 </Button>
-                <Button className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white">
+                <Button 
+                  className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white"
+                  onClick={() => navigate("/signup")}
+                >
                   Start Free Trial
                 </Button>
               </div>
