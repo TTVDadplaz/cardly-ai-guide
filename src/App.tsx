@@ -15,6 +15,10 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminCards from "./pages/AdminCards";
+import AdminPayments from "./pages/AdminPayments";
+import AdminMembers from "./pages/AdminMembers";
+import AdminBusinesses from "./pages/AdminBusinesses";
 import BusinessDashboard from "./pages/BusinessDashboard";
 import CardBuilder from "./pages/CardBuilder";
 import CardView from "./pages/CardView";
@@ -43,11 +47,15 @@ const App = () => (
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/users" element={<UserManagement />} />
+                <Route path="/admin/cards" element={<AdminCards />} />
+                <Route path="/admin/payments" element={<AdminPayments />} />
+                <Route path="/admin/members" element={<AdminMembers />} />
+                <Route path="/admin/businesses" element={<AdminBusinesses />} />
                 <Route path="/business-dashboard" element={<BusinessDashboard />} />
                 <Route path="/card-builder" element={<CardBuilder />} />
                 <Route path="/card/:id/view" element={<CardView />} />
                 <Route path="/card/:id/edit" element={<CardEdit />} />
-                <Route path="/admin/users" element={<UserManagement />} />
                 <Route path="/profile" element={<Profile />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

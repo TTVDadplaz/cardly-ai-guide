@@ -30,20 +30,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (email: string, password: string, role: 'individual' | 'superadmin'): boolean => {
-    // Check for admin credentials
-    if (email === "admin@gmail.com" && password === "PASSWORD") {
-      const adminUser: AuthUser = {
-        id: 'admin-1',
-        email: email,
-        name: 'Admin User',
-        role: 'superadmin'
-      };
-      setUser(adminUser);
-      localStorage.setItem('cardcraft_user', JSON.stringify(adminUser));
-      return true;
+    // Check for super admin credentials - ONLY these exact credentials work
+    if (role === 'superadmin') {
+      if (email === "admin@gmail.com" && password === "PASSWORD") {
+        const adminUser: AuthUser = {
+          id: 'admin-1',
+          email: email,
+          name: 'Super Admin',
+          role: 'superadmin'
+        };
+        setUser(adminUser);
+        localStorage.setItem('cardcraft_user', JSON.stringify(adminUser));
+        return true;
+      }
+      return false; // No other credentials can access super admin
     }
 
-    // Check for existing users in localStorage
+    // Check for existing users in localStorage (individual users only)
     const usersData = localStorage.getItem('cardcraft_users');
     const users = usersData ? JSON.parse(usersData) : [];
     
@@ -53,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         id: foundUser.id,
         email: foundUser.email,
         name: foundUser.name,
-        role: role
+        role: 'individual'
       };
       setUser(authUser);
       localStorage.setItem('cardcraft_user', JSON.stringify(authUser));
@@ -78,6 +81,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email,
       password,
       name,
+      plan: 'Free',
+      status: 'Active',
       createdAt: new Date().toISOString()
     };
 

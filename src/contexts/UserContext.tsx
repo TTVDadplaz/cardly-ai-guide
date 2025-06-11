@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export interface User {
   id: string;
@@ -21,32 +21,31 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: '1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      plan: 'Pro',
-      status: 'Active',
-      createdAt: new Date('2024-01-15')
-    },
-    {
-      id: '2',
-      name: 'Sarah Johnson',
-      email: 'sarah@example.com',
-      plan: 'Free',
-      status: 'Active',
-      createdAt: new Date('2024-02-20')
-    },
-    {
-      id: '3',
-      name: 'Mike Wilson',
-      email: 'mike@example.com',
-      plan: 'Business',
-      status: 'Active',
-      createdAt: new Date('2024-03-10')
+  const [users, setUsers] = useState<User[]>([]);
+
+  // Load users from localStorage on mount
+  useEffect(() => {
+    const savedUsers = localStorage.getItem('cardcraft_users');
+    if (savedUsers) {
+      const parsedUsers = JSON.parse(savedUsers);
+      const formattedUsers = parsedUsers.map((user: any) => ({
+        ...user,
+        createdAt: new Date(user.createdAt)
+      }));
+      setUsers(formattedUsers);
     }
-  ]);
+  }, []);
+
+  // Save users to localStorage whenever users changes
+  useEffect(() => {
+    if (users.length > 0) {
+      const usersToSave = users.map(user => ({
+        ...user,
+        createdAt: user.createdAt.toISOString()
+      }));
+      localStorage.setItem('cardcraft_users', JSON.stringify(usersToSave));
+    }
+  }, [users]);
 
   const addUser = (userData: Omit<User, 'id' | 'createdAt'>) => {
     const newUser: User = {

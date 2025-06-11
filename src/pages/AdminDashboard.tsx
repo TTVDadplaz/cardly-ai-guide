@@ -175,56 +175,60 @@ const AdminDashboard = () => {
                 </div>
               </div>
               <div className="p-6">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-2">Name</th>
-                        <th className="text-left py-2">Email</th>
-                        <th className="text-left py-2">Plan</th>
-                        <th className="text-left py-2">Status</th>
-                        <th className="text-left py-2">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.slice(0, 5).map((user) => (
-                        <tr key={user.id} className="border-b border-border/50">
-                          <td className="py-3">{user.name}</td>
-                          <td className="py-3 text-muted-foreground">{user.email}</td>
-                          <td className="py-3">
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              user.plan === 'Pro' ? 'bg-blue-100 text-blue-800' :
-                              user.plan === 'Business' ? 'bg-purple-100 text-purple-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {user.plan}
-                            </span>
-                          </td>
-                          <td className="py-3">
-                            <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                              {user.status}
-                            </span>
-                          </td>
-                          <td className="py-3">
-                            <div className="flex space-x-2">
-                              <Button variant="outline" size="sm">
-                                Edit
-                              </Button>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => handleDeleteUser(user.id)}
-                                className="text-red-600 hover:text-red-700"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </td>
+                {users.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">No users found</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border">
+                          <th className="text-left py-2">Name</th>
+                          <th className="text-left py-2">Email</th>
+                          <th className="text-left py-2">Plan</th>
+                          <th className="text-left py-2">Status</th>
+                          <th className="text-left py-2">Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {users.slice(0, 5).map((user) => (
+                          <tr key={user.id} className="border-b border-border/50">
+                            <td className="py-3">{user.name}</td>
+                            <td className="py-3 text-muted-foreground">{user.email}</td>
+                            <td className="py-3">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                user.plan === 'Pro' ? 'bg-blue-100 text-blue-800' :
+                                user.plan === 'Business' ? 'bg-purple-100 text-purple-800' :
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {user.plan}
+                              </span>
+                            </td>
+                            <td className="py-3">
+                              <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                                {user.status}
+                              </span>
+                            </td>
+                            <td className="py-3">
+                              <div className="flex space-x-2">
+                                <Button variant="outline" size="sm">
+                                  Edit
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleDeleteUser(user.id)}
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             </Card>
           </main>
