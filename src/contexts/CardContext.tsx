@@ -1,8 +1,10 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 
 export interface Card {
   id: string;
+  userId: string;
   name: string;
   title: string;
   company: string;
@@ -18,7 +20,7 @@ export interface Card {
 
 interface CardContextType {
   cards: Card[];
-  addCard: (card: Omit<Card, 'id' | 'views' | 'shares' | 'createdAt'>) => void;
+  addCard: (card: Omit<Card, 'id' | 'userId' | 'views' | 'shares' | 'createdAt'>) => void;
   updateCard: (id: string, card: Partial<Card>) => void;
   deleteCard: (id: string) => void;
   getCard: (id: string) => Card | undefined;
@@ -27,31 +29,51 @@ interface CardContextType {
 const CardContext = createContext<CardContextType | undefined>(undefined);
 
 export const CardProvider = ({ children }: { children: ReactNode }) => {
-  const [cards, setCards] = useState<Card[]>([]);
+  const [allCards, setAllCards] = useState<Card[]>([]);
+  const { user } = useAuth();
 
-  const addCard = (cardData: Omit<Card, 'id' | 'views' | 'shares' | 'createdAt'>) => {
+  // Load cards from localStorage on mount
+  useEffect(() => {
+    const savedCards = localStorage.getItem('cardcraft_cards');
+    if (savedCards) {
+      setAllCards(JSON.parse(savedCards));
+    }
+  }, []);
+
+  // Save cards to localStorage whenever allCards changes
+  useEffect(() => {
+    localStorage.setItem('cardcraft_cards', JSON.stringify(allCards));
+  }, [allCards]);
+
+  // Filter cards for current user
+  const cards = user ? allCards.filter(card => card.userId === user.id) : [];
+
+  const addCard = (cardData: Omit<Card, 'id' | 'userId' | 'views' | 'shares' | 'createdAt'>) => {
+    if (!user) return;
+    
     const newCard: Card = {
       ...cardData,
       id: Math.random().toString(36).substr(2, 9),
+      userId: user.id,
       views: 0,
       shares: 0,
       createdAt: new Date()
     };
-    setCards(prev => [...prev, newCard]);
+    setAllCards(prev => [...prev, newCard]);
   };
 
   const updateCard = (id: string, updatedData: Partial<Card>) => {
-    setCards(prev => prev.map(card => 
+    setAllCards(prev => prev.map(card => 
       card.id === id ? { ...card, ...updatedData } : card
     ));
   };
 
   const deleteCard = (id: string) => {
-    setCards(prev => prev.filter(card => card.id !== id));
+    setAllCards(prev => prev.filter(card => card.id !== id));
   };
 
   const getCard = (id: string) => {
-    return cards.find(card => card.id === id);
+    return allCards.find(card => card.id === id);
   };
 
   return (

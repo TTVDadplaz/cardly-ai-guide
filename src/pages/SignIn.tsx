@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreditCard, User, Shield } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [userType, setUserType] = useState<'individual' | 'superadmin'>('individual');
   const [formData, setFormData] = useState({
     email: "",
@@ -18,17 +20,23 @@ const SignIn = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check for admin credentials
-    if (formData.email === "admin@gmail.com" && formData.password === "PASSWORD") {
-      navigate("/admin");
-      return;
-    }
+    const success = login(formData.email, formData.password, userType);
     
-    // Route based on user type
-    if (userType === 'superadmin') {
-      navigate("/admin");
+    if (success) {
+      // Check for admin credentials
+      if (formData.email === "admin@gmail.com" && formData.password === "PASSWORD") {
+        navigate("/admin");
+        return;
+      }
+      
+      // Route based on user type
+      if (userType === 'superadmin') {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } else {
-      navigate("/dashboard");
+      alert('Invalid credentials. Please try again.');
     }
   };
 

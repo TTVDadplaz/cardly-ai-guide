@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreditCard, User, ArrowLeft, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    name: "John Doe",
-    email: "john@example.com",
+    name: user?.name || "",
+    email: user?.email || "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""

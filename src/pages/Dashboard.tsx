@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Plus, Eye, Edit, Share, BarChart3, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCards } from "@/contexts/CardContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { cards } = useCards();
+  const { logout, user } = useAuth();
 
   const handleLogout = () => {
+    logout();
     navigate("/");
   };
 
@@ -49,7 +52,8 @@ const Dashboard = () => {
               <span className="text-xl font-bold text-gradient">CardCraft</span>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
+              <span className="text-sm text-muted-foreground">Welcome, {user?.name}</span>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
                 <User className="w-4 h-4 mr-2" />
                 Profile
               </Button>

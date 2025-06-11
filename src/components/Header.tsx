@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Menu, X, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
@@ -38,19 +40,24 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => navigate("/profile")}>
-              <User className="w-4 h-4 mr-2" />
-              Profile
-            </Button>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => navigate("/signin")}>
-              Sign In
-            </Button>
-            <Button 
-              className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white"
-              onClick={() => navigate("/signup")}
-            >
-              Start Free Trial
-            </Button>
+            {isAuthenticated ? (
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => navigate("/profile")}>
+                <User className="w-4 h-4 mr-2" />
+                Profile
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => navigate("/signin")}>
+                  Sign In
+                </Button>
+                <Button 
+                  className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white"
+                  onClick={() => navigate("/signup")}
+                >
+                  Start Free Trial
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -83,19 +90,24 @@ const Header = () => {
                 About
               </Link>
               <div className="flex flex-col space-y-2 pt-4">
-                <Button variant="ghost" className="justify-start" onClick={() => navigate("/profile")}>
-                  <User className="w-4 h-4 mr-2" />
-                  Profile
-                </Button>
-                <Button variant="ghost" className="justify-start" onClick={() => navigate("/signin")}>
-                  Sign In
-                </Button>
-                <Button 
-                  className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white"
-                  onClick={() => navigate("/signup")}
-                >
-                  Start Free Trial
-                </Button>
+                {isAuthenticated ? (
+                  <Button variant="ghost" className="justify-start" onClick={() => navigate("/profile")}>
+                    <User className="w-4 h-4 mr-2" />
+                    Profile
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" className="justify-start" onClick={() => navigate("/signin")}>
+                      Sign In
+                    </Button>
+                    <Button 
+                      className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white"
+                      onClick={() => navigate("/signup")}
+                    >
+                      Start Free Trial
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>
