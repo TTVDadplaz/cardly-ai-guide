@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,10 @@ const Profile = () => {
     newPassword: "",
     confirmPassword: ""
   });
+
+  const handleBack = () => {
+    navigate(-1); // Go back to previous page
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,9 +48,9 @@ const Profile = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate("/dashboard")}>
+              <Button variant="ghost" onClick={handleBack}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                Back
               </Button>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg flex items-center justify-center">
@@ -154,7 +157,7 @@ const Profile = () => {
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={() => navigate("/dashboard")}
+                  onClick={handleBack}
                 >
                   Cancel
                 </Button>
