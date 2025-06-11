@@ -1,4 +1,4 @@
-# AI vCard Generator Project
+# AI vCard Generator Project by Ahmad jamil
 
 A tool for creating AI-powered digital business cards with dynamic sharing and analytics.
 
