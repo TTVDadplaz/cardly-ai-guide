@@ -1,6 +1,7 @@
 # AI vCard Generator Project by Ahmad jamil
 
 A tool for creating AI-powered digital business cards with dynamic sharing and analytics.
+<img src="https://raw.githubusercontent.com/Ahmadjamil888/cardly-ai-guide/refs/heads/main/public/WhatsApp%20Image%202025-06-10%20at%2022.33.33_030a8bb0.jpg">
 
 ## Project URL
 https://cardly-ai-guide.vercel.app/
