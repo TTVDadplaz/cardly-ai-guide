@@ -16,9 +16,11 @@ const SignIn = () => {
     email: "",
     password: ""
   });
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     
     const success = login(formData.email, formData.password, userType);
     
@@ -36,11 +38,12 @@ const SignIn = () => {
         navigate("/dashboard");
       }
     } else {
-      alert('Invalid credentials. Please try again.');
+      setError('These credentials don\'t match our records. Please try again.');
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(""); // Clear error when user types
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -85,6 +88,12 @@ const SignIn = () => {
             </Button>
           </div>
         </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -131,7 +140,7 @@ const SignIn = () => {
           <p className="text-xs text-muted-foreground text-center">
             Demo credentials:<br />
             Admin: admin@gmail.com / PASSWORD<br />
-            User: user@example.com / password
+            User created via admin: email / admin123
           </p>
         </div>
       </Card>

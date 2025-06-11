@@ -75,11 +75,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return false; // User already exists
     }
 
-    // Create new user
+    // Create new user with password for authentication and sync with UserContext format
     const newUser = {
       id: Math.random().toString(36).substr(2, 9),
       email,
-      password,
+      password, // Keep password for authentication
       name,
       plan: 'Free',
       status: 'Active',
@@ -88,6 +88,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     users.push(newUser);
     localStorage.setItem('cardcraft_users', JSON.stringify(users));
+
+    // Trigger UserContext to reload users
+    window.dispatchEvent(new Event('userDataChanged'));
 
     // Auto login the new user
     const authUser: AuthUser = {

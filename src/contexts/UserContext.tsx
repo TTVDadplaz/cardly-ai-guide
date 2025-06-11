@@ -23,27 +23,59 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [users, setUsers] = useState<User[]>([]);
 
-  // Load users from localStorage on mount
-  useEffect(() => {
+  // Load users from localStorage and convert format
+  const loadUsers = () => {
     const savedUsers = localStorage.getItem('cardcraft_users');
     if (savedUsers) {
       const parsedUsers = JSON.parse(savedUsers);
       const formattedUsers = parsedUsers.map((user: any) => ({
-        ...user,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        plan: user.plan || 'Free',
+        status: user.status || 'Active',
         createdAt: new Date(user.createdAt)
       }));
       setUsers(formattedUsers);
     }
+  };
+
+  // Load users on mount
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  // Listen for user data changes from other parts of the app
+  useEffect(() => {
+    const handleUserDataChange = () => {
+      loadUsers();
+    };
+
+    window.addEventListener('userDataChanged', handleUserDataChange);
+    return () => window.removeEventListener('userDataChanged', handleUserDataChange);
   }, []);
 
   // Save users to localStorage whenever users changes
   useEffect(() => {
-    if (users.length > 0) {
-      const usersToSave = users.map(user => ({
-        ...user,
-        createdAt: user.createdAt.toISOString()
-      }));
-      localStorage.setItem('cardcraft_users', JSON.stringify(usersToSave));
+    if (users.length >= 0) {
+      const savedUsers = localStorage.getItem('cardcraft_users');
+      const existingUsers = savedUsers ? JSON.parse(savedUsers) : [];
+      
+      // Update the stored users while preserving passwords
+      const updatedUsers = users.map(user => {
+        const existingUser = existingUsers.find((u: any) => u.id === user.id);
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          password: existingUser?.password || 'defaultPassword123', // Keep existing password or set default
+          plan: user.plan,
+          status: user.status,
+          createdAt: user.createdAt.toISOString()
+        };
+      });
+      
+      localStorage.setItem('cardcraft_users', JSON.stringify(updatedUsers));
     }
   }, [users]);
 
@@ -53,6 +85,24 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       id: Math.random().toString(36).substr(2, 9),
       createdAt: new Date()
     };
+    
+    // Add to localStorage directly with password
+    const savedUsers = localStorage.getItem('cardcraft_users');
+    const existingUsers = savedUsers ? JSON.parse(savedUsers) : [];
+    
+    const newUserWithPassword = {
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      password: 'admin123', // Default password for admin-created users
+      plan: newUser.plan,
+      status: newUser.status,
+      createdAt: newUser.createdAt.toISOString()
+    };
+    
+    existingUsers.push(newUserWithPassword);
+    localStorage.setItem('cardcraft_users', JSON.stringify(existingUsers));
+    
     setUsers(prev => [...prev, newUser]);
   };
 
@@ -63,6 +113,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteUser = (id: string) => {
+    // Remove from localStorage
+    const savedUsers = localStorage.getItem('cardcraft_users');
+    if (savedUsers) {
+      const existingUsers = JSON.parse(savedUsers);
+      const filteredUsers = existingUsers.filter((u: any) => u.id !== id);
+      localStorage.setItem('cardcraft_users', JSON.stringify(filteredUsers));
+    }
+    
     setUsers(prev => prev.filter(user => user.id !== id));
   };
 
