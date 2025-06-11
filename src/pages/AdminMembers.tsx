@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,26 +15,66 @@ interface AdminMember {
   role: string;
   status: 'Active' | 'Inactive';
   createdAt: Date;
+  password: string;
 }
 
 const AdminMembers = () => {
   const navigate = useNavigate();
-  const [admins, setAdmins] = useState<AdminMember[]>([
-    {
-      id: 'admin-1',
-      name: 'Super Admin',
-      email: 'admin@gmail.com',
-      role: 'Super Admin',
-      status: 'Active',
-      createdAt: new Date('2024-01-01')
-    }
-  ]);
+  const [admins, setAdmins] = useState<AdminMember[]>([]);
   const [isAddAdminOpen, setIsAddAdminOpen] = useState(false);
   const [newAdmin, setNewAdmin] = useState({
     name: "",
     email: "",
-    role: "Admin"
+    role: "Admin",
+    password: "admin123"
   });
+
+  // Load admin members from localStorage
+  const loadAdminMembers = () => {
+    const savedAdmins = localStorage.getItem('cardcraft_admin_members');
+    let adminMembers = [];
+    
+    if (savedAdmins) {
+      const parsedAdmins = JSON.parse(savedAdmins);
+      adminMembers = parsedAdmins.map((admin: any) => ({
+        ...admin,
+        createdAt: new Date(admin.createdAt)
+      }));
+    }
+    
+    // Always include the super admin
+    const superAdmin = {
+      id: 'admin-1',
+      name: 'Super Admin',
+      email: 'admin@gmail.com',
+      role: 'Super Admin',
+      status: 'Active' as const,
+      createdAt: new Date('2024-01-01'),
+      password: 'PASSWORD'
+    };
+    
+    // Check if super admin already exists in the list
+    const hasSuperAdmin = adminMembers.some((admin: AdminMember) => admin.id === 'admin-1');
+    if (!hasSuperAdmin) {
+      adminMembers.unshift(superAdmin);
+    }
+    
+    setAdmins(adminMembers);
+  };
+
+  // Load admin members on component mount
+  useEffect(() => {
+    loadAdminMembers();
+  }, []);
+
+  // Save admin members to localStorage (excluding super admin)
+  const saveAdminMembers = (adminList: AdminMember[]) => {
+    const adminsToSave = adminList.filter(admin => admin.id !== 'admin-1').map(admin => ({
+      ...admin,
+      createdAt: admin.createdAt.toISOString()
+    }));
+    localStorage.setItem('cardcraft_admin_members', JSON.stringify(adminsToSave));
+  };
 
   const handleAddAdmin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,8 +84,12 @@ const AdminMembers = () => {
       status: 'Active',
       createdAt: new Date()
     };
-    setAdmins(prev => [...prev, admin]);
-    setNewAdmin({ name: "", email: "", role: "Admin" });
+    
+    const updatedAdmins = [...admins, admin];
+    setAdmins(updatedAdmins);
+    saveAdminMembers(updatedAdmins);
+    
+    setNewAdmin({ name: "", email: "", role: "Admin", password: "admin123" });
     setIsAddAdminOpen(false);
   };
 
@@ -55,7 +99,9 @@ const AdminMembers = () => {
       return;
     }
     if (window.confirm('Are you sure you want to delete this admin?')) {
-      setAdmins(prev => prev.filter(admin => admin.id !== adminId));
+      const updatedAdmins = admins.filter(admin => admin.id !== adminId);
+      setAdmins(updatedAdmins);
+      saveAdminMembers(updatedAdmins);
     }
   };
 
@@ -123,6 +169,16 @@ const AdminMembers = () => {
                     id="role"
                     value={newAdmin.role}
                     onChange={(e) => setNewAdmin({...newAdmin, role: e.target.value})}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={newAdmin.password}
+                    onChange={(e) => setNewAdmin({...newAdmin, password: e.target.value})}
                     required
                   />
                 </div>

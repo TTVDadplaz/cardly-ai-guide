@@ -5,7 +5,7 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
-  role: 'individual' | 'business' | 'superadmin';
+  role: 'individual' | 'business' | 'superadmin' | 'admin';
 }
 
 interface AuthContextType {
@@ -43,6 +43,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('cardcraft_user', JSON.stringify(adminUser));
         return true;
       }
+
+      // Check for admin members when trying to login as superadmin
+      const adminMembersData = localStorage.getItem('cardcraft_admin_members');
+      const adminMembers = adminMembersData ? JSON.parse(adminMembersData) : [];
+      
+      const foundAdmin = adminMembers.find((admin: any) => admin.email === email && admin.password === password);
+      if (foundAdmin) {
+        const authUser: AuthUser = {
+          id: foundAdmin.id,
+          email: foundAdmin.email,
+          name: foundAdmin.name,
+          role: 'admin'
+        };
+        setUser(authUser);
+        localStorage.setItem('cardcraft_user', JSON.stringify(authUser));
+        return true;
+      }
+      
       return false; // No other credentials can access super admin
     }
 

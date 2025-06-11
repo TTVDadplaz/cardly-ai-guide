@@ -25,14 +25,20 @@ const SignIn = () => {
     const success = login(formData.email, formData.password, userType);
     
     if (success) {
-      // Check for admin credentials
+      // Check for admin credentials (super admin or regular admin)
       if (formData.email === "admin@gmail.com" && formData.password === "PASSWORD") {
         navigate("/admin");
         return;
       }
       
-      // Route based on user type
-      if (userType === 'superadmin') {
+      // Check if it's an admin member
+      const adminMembersData = localStorage.getItem('cardcraft_admin_members');
+      const adminMembers = adminMembersData ? JSON.parse(adminMembersData) : [];
+      const isAdminMember = adminMembers.find((admin: any) => 
+        admin.email === formData.email && admin.password === formData.password
+      );
+      
+      if (isAdminMember || userType === 'superadmin') {
         navigate("/admin");
       } else {
         navigate("/dashboard");
@@ -139,8 +145,9 @@ const SignIn = () => {
         <div className="mt-4 p-4 bg-muted/50 rounded-lg">
           <p className="text-xs text-muted-foreground text-center">
             Demo credentials:<br />
-            Admin: admin@gmail.com / PASSWORD<br />
-            User created via admin: email / admin123
+            Super Admin: admin@gmail.com / PASSWORD<br />
+            User created via admin: email / admin123<br />
+            Admin created via admin: email / admin123
           </p>
         </div>
       </Card>
